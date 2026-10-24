@@ -19,6 +19,7 @@ import pytest
 from pytest_flask.plugin import _make_test_response_class
 from selenium import webdriver
 
+from .marshmallow4 import strict_context
 from .user import UserFixtureBase
 
 python_minor = sys.version_info[1]
@@ -382,6 +383,20 @@ def _monkeypatch_response_class(request, monkeypatch):
     monkeypatch.setattr(
         base_app, "response_class", _make_test_response_class(base_app.response_class)
     )
+
+
+@pytest.fixture(autouse=True, scope="function")
+def _marshmallow4_strict_context():
+    """Fail on reading the marshmallow ``Schema.context`` removed in marshmallow 4.
+
+    Always on. When marshmallow 3 is installed, reading ``.context`` of a
+    schema or a field raises
+    :class:`~pytest_invenio.marshmallow4.Marshmallow4ContextError` (an
+    ``AttributeError``, as in marshmallow 4). Does nothing if marshmallow is
+    not installed or is already version 4+.
+    """
+    with strict_context():
+        yield
 
 
 @pytest.fixture(scope="function")

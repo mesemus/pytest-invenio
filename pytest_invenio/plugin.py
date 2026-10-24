@@ -19,6 +19,7 @@ import pytest
 
 from .fixtures import (  # noqa
     UserFixture,
+    _marshmallow4_strict_context,
     _monkeypatch_response_class,
     app,
     app_config,
